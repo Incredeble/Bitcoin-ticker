@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import '';
 import 'dart:io' show Platform;
 import 'coin_data.dart';
 
@@ -11,7 +10,6 @@ class PriceScreen extends StatefulWidget {
 
 class _PriceScreenState extends State<PriceScreen> {
   String dropDownValue = 'USD';
-  List<Widget> card;
 
   DropdownButton getAndroidDropDown() {
     List<DropdownMenuItem<String>> dropDownItem = [];
@@ -37,6 +35,7 @@ class _PriceScreenState extends State<PriceScreen> {
       onChanged: (currency) {
         setState(() {
           dropDownValue = currency;
+          getDetails();
         });
       },
     );
@@ -53,6 +52,7 @@ class _PriceScreenState extends State<PriceScreen> {
       itemExtent: 32.0,
       onSelectedItemChanged: (index) {
         print(index);
+        getDetails();
       },
       children: dropDownItem,
     );
@@ -75,35 +75,20 @@ class _PriceScreenState extends State<PriceScreen> {
     getCrypto();
   }
 
-  void getDetails() {
-    card.add(cards(cryptoList[0], dropDownValue, cryptoPrices[cryptoList[0]]));
-    card.add(cards(cryptoList[1], dropDownValue, cryptoPrices[cryptoList[1]]));
-    card.add(cards(cryptoList[2], dropDownValue, cryptoPrices[cryptoList[2]]));
-  }
-
-  Widget cards(String fromCrypto, String toCrypto, String cryptoValue) {
-    return Padding(
-      padding: EdgeInsets.fromLTRB(18.0, 18.0, 18.0, 0),
-      child: Card(
-        color: Colors.lightBlueAccent,
-        elevation: 5.0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10.0),
+  Column getDetails() {
+    List<CryptoCard> cryptoCards = [];
+    for (String crypto in cryptoList) {
+      cryptoCards.add(
+        CryptoCard(
+          fromCrypto: crypto,
+          toCrypto: dropDownValue,
+          cryptoValue: isLoading ? '?' : cryptoPrices[crypto],
         ),
-        child: Padding(
-          padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 28.0),
-          child: isLoading
-              ? '?'
-              : Text(
-                  '1 $fromCrypto = $cryptoValue $toCrypto',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 20.0,
-                    color: Colors.white,
-                  ),
-                ),
-        ),
-      ),
+      );
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: cryptoCards,
     );
   }
 
@@ -118,6 +103,7 @@ class _PriceScreenState extends State<PriceScreen> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
+          getDetails(),
           Container(
             margin: EdgeInsets.symmetric(horizontal: 90.0, vertical: 30.0),
             height: 50.0,
@@ -130,6 +116,43 @@ class _PriceScreenState extends State<PriceScreen> {
             child: Platform.isIOS ? getiOSDropDown() : getAndroidDropDown(),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class CryptoCard extends StatelessWidget {
+  const CryptoCard({
+    this.cryptoValue,
+    this.toCrypto,
+    this.fromCrypto,
+  });
+
+  final String cryptoValue;
+  final String toCrypto;
+  final String fromCrypto;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(18.0, 18.0, 18.0, 0),
+      child: Card(
+        color: Colors.lightBlueAccent,
+        elevation: 5.0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+        child: Padding(
+          padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 28.0),
+          child: Text(
+            '1 $fromCrypto = $cryptoValue $toCrypto',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 20.0,
+              color: Colors.white,
+            ),
+          ),
+        ),
       ),
     );
   }

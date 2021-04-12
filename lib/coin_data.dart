@@ -35,8 +35,9 @@ class CoinData {
     Map<String, String> cryptoPrices = {};
     String crypto;
     for (crypto in cryptoList) {
-      String url = '$coinAPIURL?$crypto?$selectedCurrency?apikey=$apiKey';
-      http.Response response = await http.get(jsonDecode(url));
+      final url =
+          '$coinAPIURL/$crypto/$selectedCurrency?apikey=3451AAE9-13D4-417E-9B98-7706B353E6EC';
+      http.Response response = await http.get(url);
       print(response);
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
