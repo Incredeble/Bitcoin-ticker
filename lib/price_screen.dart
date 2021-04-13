@@ -9,7 +9,7 @@ class PriceScreen extends StatefulWidget {
 }
 
 class _PriceScreenState extends State<PriceScreen> {
-  String dropDownValue = 'USD';
+  String toctypto = 'USD';
 
   DropdownButton getAndroidDropDown() {
     List<DropdownMenuItem<String>> dropDownItem = [];
@@ -30,11 +30,11 @@ class _PriceScreenState extends State<PriceScreen> {
     }
     return DropdownButton<String>(
       dropdownColor: Colors.lightBlueAccent,
-      value: dropDownValue,
+      value: toctypto,
       items: dropDownItem,
       onChanged: (currency) {
         setState(() {
-          dropDownValue = currency;
+          toctypto = currency;
           getDetails();
         });
       },
@@ -63,7 +63,7 @@ class _PriceScreenState extends State<PriceScreen> {
 
   void getCrypto() async {
     CoinData data = CoinData();
-    cryptoPrices = await data.getCoinData(dropDownValue);
+    cryptoPrices = await data.getCoinData(toctypto);
     setState(() {
       isLoading = false;
     });
@@ -81,7 +81,7 @@ class _PriceScreenState extends State<PriceScreen> {
       cryptoCards.add(
         CryptoCard(
           fromCrypto: crypto,
-          toCrypto: dropDownValue,
+          toCrypto: toctypto,
           cryptoValue: isLoading ? '?' : cryptoPrices[crypto],
         ),
       );
